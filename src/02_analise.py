@@ -2,9 +2,11 @@
 import pandas as pd
 import sqlalchemy
 import matplotlib.pyplot as plt
+import matplotlib.image as img
 import seaborn as sns
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+from sklearn import cluster
 from adjustText import adjust_text
-
 #%%
 
 with open("partidos.sql", "r") as open_file:
@@ -28,26 +30,137 @@ plt.figure(dpi=500)
 
 sns.scatterplot(data=df, 
                  x='txGenFemininoBR',
-                 y='txCorRacaPretaBR')
+                 y='txCorRacaPretaBR',
+                 size='totalCandidaturas',
+                 sizes=(5, 200))
 
 texts = []
-for i in df['SG_PARTIDO']:
-        data = df[df['SG_PARTIDO'] == i]
-        x = data['txGenFemininoBR'].values[0]
-        y = data['txCorRacaPretaBR'].values[0]
-        texts.append(plt.text(x, y, i, fontsize=9))
 
-adjust_text(texts, only_move={'points':'y', 'texts': 'x,y'}, arrowprops=dict(arrowstyle='->'))
+for i in df['SG_PARTIDO']:
+    data = df[df['SG_PARTIDO'] == i]
+    x = data['txGenFemininoBR'].values[0]
+    y = data['txCorRacaPretaBR'].values[0]
+    texts.append(plt.text(x, y, i, fontsize=9))
+
+adjust_text(texts,
+            force_points=0.0002,
+            force_text=0.4,
+            expand_points=(0.5, 0.75), expand_text=(0.5, 0.75),
+            arrowprops=dict(arrowstyle="-", color='black', lw=0.2),
+            pull_threshold=1000,
+            )
 
 plt.grid(True)
-plt.title("Cor vs Genero - Eleições 2024")
+plt.title("Partidos: Cor vs Genero - Eleições 2024")
 plt.xlabel("Taxa de Mulheres")
 plt.ylabel("Taxa de Pessoas Pretas")
 
-plt.hlines(y=txCorRacaPreta, xmin=0.3, xmax=0.55, color='black', linestyles="--", label=f"Pessoas Pretas Geral: {100*txCorRacaPreta:.0f} %")
-plt.vlines(x=txGenFeminino, ymin=0.03, ymax=0.35, color='tomato', linestyles="--", label=f"Mulheres Geral: {100*txGenFeminino:.0f} %")
-plt.legend()
+plt.hlines(y=txCorRacaPreta, xmin=0.3, xmax=0.55, colors='black', alpha=0.6, linestyles='--', label=f"Pessoas Pretas Geral: {100*txCorRacaPreta:.0f}%")
+plt.vlines(x=txGenFeminino, ymin=0.05, ymax=0.35, colors='tomato', alpha=0.6, linestyles='--', label=f"Mulheres Geral: {100*txGenFeminino:.0f}%")
 
-plt.savefig("../img/partidos_cor_raca_genero.png")
+handles, labels = plt.gca().get_legend_handles_labels()
+handles = handles[5:]
+labels = labels[5:]  
 
+plt.legend(handles=handles, labels=labels)
+
+plt.savefig("../img/partidos_cor_raca_genero_bolha_size.png")
+
+# %%
+
+from sklearn import cluster
+
+X = df[["txGenFemininoBR","txCorRacaPretaBR"]]
+model = cluster.KMeans(n_clusters=6)
+model.fit(X)
+
+df["clusterBR"] = model.labels_
+
+plt.figure(dpi=360, figsize=(6,5.5))
+
+sns.scatterplot(data=df,
+               x="txGenFemininoBR",
+               y="txCorRacaPretaBR",
+            #    size="totalCandidaturas",
+            #    sizes=(5,300),
+               hue='clusterBR',
+               palette='viridis',
+               )
+
+texts = []
+for i in df['SG_PARTIDO']:
+    data = df[df['SG_PARTIDO'] == i]
+    x = data['txGenFemininoBR'].values[0]
+    y = data['txCorRacaPretaBR'].values[0]
+    texts.append(plt.text(x, y, i, fontsize=9))
+
+adjust_text(texts,
+            force_points=0.0002,
+            force_text=0.4,
+            expand_points=(0.5, 0.75), expand_text=(0.5, 0.75),
+            arrowprops=dict(arrowstyle="-", color='black', lw=0.2),
+            pull_threshold=1000,
+            )
+
+plt.grid(True)
+plt.title("Partidos: Cor vs Genero - Eleições 2024")
+plt.xlabel("Taxa de Mulheres")
+plt.ylabel("Taxa de Pessoas Pretas")
+
+plt.hlines(y=txCorRacaPreta, xmin=0.3, xmax=0.55, colors='black', alpha=0.6, linestyles='--', label=f"Pessoas Pretas Geral: {100*txCorRacaPreta:.0f}%")
+plt.vlines(x=txGenFeminino, ymin=0.05, ymax=0.35, colors='tomato', alpha=0.6, linestyles='--', label=f"Mulheres Geral: {100*txGenFeminino:.0f}%")
+
+handles, labels = plt.gca().get_legend_handles_labels()
+handles = handles[6:]
+labels = labels[6:]
+
+plt.legend(handles=handles, labels=labels)
+
+plt.savefig("../img/partidos_cor_raca_genero_clusterBR.png")
+# %%
+
+
+plt.figure(dpi=360, figsize=(6,5.5))
+
+sns.scatterplot(data=df,
+               x="txGenFemininoBR",
+               y="txCorRacaPretaBR",
+               size="totalCandidaturas",
+               sizes=(5,300),
+               hue='clusterBR',
+               palette='viridis',
+               alpha=0.6,
+)
+
+texts = []
+for i in df['SG_PARTIDO']:
+    data = df[df['SG_PARTIDO'] == i]
+    x = data['txGenFemininoBR'].values[0]
+    y = data['txCorRacaPretaBR'].values[0]
+    texts.append(plt.text(x, y, i, fontsize=9))
+
+adjust_text(texts,
+            force_points=0.0002,
+            force_text=0.4,
+            expand_points=(0.5, 0.75), expand_text=(0.5, 0.75),
+            arrowprops=dict(arrowstyle="-", color='black', lw=0.2),
+            pull_threshold=1000,
+            )
+
+plt.grid(True)
+plt.suptitle("Partidos: Cor vs Genero - Eleições 2024")
+plt.title("Maior a bolha, maior o tamanho do partido", fontdict={"size":9})
+plt.xlabel("Taxa de Mulheres")
+plt.ylabel("Taxa de Pessoas Pretas")
+
+plt.hlines(y=txCorRacaPreta, xmin=0.3, xmax=0.55, colors='black', alpha=0.6, linestyles='--', label=f"Pessoas Pretas Geral: {100*txCorRacaPreta:.0f}%")
+plt.vlines(x=txGenFeminino, ymin=0.05, ymax=0.35, colors='tomato', alpha=0.6, linestyles='--', label=f"Mulheres Geral: {100*txGenFeminino:.0f}%")
+
+handles, labels = plt.gca().get_legend_handles_labels()
+handles = handles[13:]
+labels = labels[13:]
+
+plt.legend(handles=handles, labels=labels)
+
+plt.savefig("../img/partidos_cor_raca_genero_clusterBR_size.png")
 # %%
