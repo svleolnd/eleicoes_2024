@@ -30,7 +30,7 @@ def make_scatter(data, cluster=False, size=False):
     sns.scatterplot(**config)
 
     texts = []
-    for i in data['SG_PARTIDO']:
+    for i in data['SG_PARTIDO'].unique():
         data_tmp = data[data['SG_PARTIDO'] == i]
         x = data_tmp['txGenFeminino'].values[0]
         y = data_tmp['txCorRacaPreta'].values[0]
