@@ -11,11 +11,11 @@ Tribunal Superior Eleitoral (TSE): [Acesse os dados aqui](https://dadosabertos.t
 
 - Diversidade por gênero e cor/raça
 
- - [x] Agrupamento
- - [x] Separação por UF
- - [x] Separação por cargo
- - [x] Separação por UF/Cargo
- - [x] Análise mulheres pretas
+    - [x] Agrupamento
+    - [x] Separação por UF
+    - [x] Separação por cargo
+    - [x] Separação por UF/Cargo
+    - [x] Análise mulheres pretas
 
  - [ ] Análise faixa etária
 
