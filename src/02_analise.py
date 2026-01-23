@@ -4,9 +4,7 @@ import sqlalchemy
 import matplotlib.pyplot as plt
 import matplotlib.image as img
 import seaborn as sns
-from matplotlib.offsetbox import OffsetImage, AnnotationBbox
-from sklearn import cluster
-from adjustText import adjust_text
+c
 #%%
 
 with open("partidos.sql", "r") as open_file:
