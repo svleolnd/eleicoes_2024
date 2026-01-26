@@ -79,7 +79,7 @@ def make_scatter(data, cluster=False, size=False):
 
 def make_clusters(data, n=6):
 
-    model = cluster.KMeans(n_clusters=n, random_state=42)
+    model = cluster.KMeans(n_clusters=n, random_state=42, max_iter=1000)
     model.fit(data[['txGenFeminino', 'txCorRacaPreta']])
     data["cluster"] = model.labels_
 
